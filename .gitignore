@@ -1,1 +1,4 @@
 *.cfg
+.venv*
+.ipynb_checkpoints/
+__pycache__
