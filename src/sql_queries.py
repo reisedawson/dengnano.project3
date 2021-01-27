@@ -24,8 +24,7 @@ time_table_create = open('sql/prod_dim_time_create.sql', 'r').read()
 
 # STAGING TABLES
 # log_data/2018/11/2018-11-12-events.json
-staging_events_copy = ("""
-""").format()
+staging_events_copy = open('sql/staging_events_copy.sql', 'r').read().format(config['S3']['LOG_DATA'], config['IAM_ROLE']['ARN'].replace("'",""))
 
 staging_songs_copy = ("""
 """).format()
@@ -61,8 +60,8 @@ drop_table_queries = [staging_events_table_drop,
                       song_table_drop,
                       artist_table_drop,
                       time_table_drop]
-copy_table_queries = [staging_events_copy,
-                      staging_songs_copy]
+copy_table_queries = [staging_events_copy]#,
+                      #staging_songs_copy]
 insert_table_queries = [songplay_table_insert,
                         user_table_insert,
                         song_table_insert,
