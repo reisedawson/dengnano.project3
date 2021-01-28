@@ -2,14 +2,14 @@ CREATE TABLE IF NOT EXISTS stg_events (
     artist VARCHAR(max)
     , auth VARCHAR(max)
     , firstName VARCHAR(max)
-    , gender VARCHAR(1)
+    , gender VARCHAR(max)
     , itemInSession BIGINT
     , lastName VARCHAR(max)
     , length DECIMAL(10,6)
-    , level VARCHAR(4)
+    , level VARCHAR(max)
     , location VARCHAR(max)
-    , method VARCHAR(10)
-    , page VARCHAR(10)
+    , method VARCHAR(max)
+    , page VARCHAR(max)
     , registration VARCHAR(max)
     , sessionId BIGINT
     , song VARCHAR(max)

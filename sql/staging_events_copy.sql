@@ -1,3 +1,3 @@
 COPY stg_events FROM {}
 credentials 'aws_iam_role={}'
-compupdate off region 'eu-west-2';
+json 'auto' compupdate off region 'us-west-2';
