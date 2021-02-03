@@ -34,7 +34,7 @@ def main():
                             port={}".format(*config['CLUSTER'].values()))
     cur = conn.cursor()
 
-    load_staging_tables(cur, conn)
+    #load_staging_tables(cur, conn)
     insert_tables(cur, conn)
 
     conn.close()
