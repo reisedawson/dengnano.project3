@@ -34,12 +34,8 @@ user_table_insert = ("""
 """)
 
 song_table_insert = open('sql/prod_dim_songs_insert.sql', 'r').read()
-
-artist_table_insert = ("""
-""")
-
-time_table_insert = ("""
-""")
+artist_table_insert = open('sql/prod_dim_artists_insert.sql', 'r').read()
+time_table_insert = open('sql/prod_dim_time_insert.sql', 'r').read()
 
 # QUERY LISTS
 create_table_queries = [staging_events_table_create,
