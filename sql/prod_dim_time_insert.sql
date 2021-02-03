@@ -23,6 +23,8 @@ INSERT INTO dim_time (start_time, start_hour, start_day, start_week, start_month
         , EXTRACT(weekday FROM TIMESTAMP 'epoch' + ts/1000 *INTERVAL '1 second')
     FROM 
         stg_events
+    WHERE
+        page = 'NextSong'
 );
 
 END TRANSACTION;
