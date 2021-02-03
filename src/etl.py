@@ -15,8 +15,8 @@ def load_staging_tables(cur, conn):
 
 def insert_tables(cur, conn):
     """
-    Transform the raw logs and song files that were loaded to Redshift 
-    into a dimensional model based analytics schema. 
+    Transform the raw logs and song files that were loaded to Redshift
+    into a dimensional model based analytics schema.
     """
     for query in insert_table_queries:
         cur.execute(query)
@@ -35,7 +35,7 @@ def main():
     cur = conn.cursor()
 
     load_staging_tables(cur, conn)
-    #insert_tables(cur, conn)
+    insert_tables(cur, conn)
 
     conn.close()
 

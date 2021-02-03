@@ -33,8 +33,7 @@ songplay_table_insert = ("""
 user_table_insert = ("""
 """)
 
-song_table_insert = ("""
-""")
+song_table_insert = open('sql/prod_dim_songs_insert.sql', 'r').read()
 
 artist_table_insert = ("""
 """)
@@ -59,8 +58,8 @@ drop_table_queries = [staging_events_table_drop,
                       time_table_drop]
 copy_table_queries = [staging_events_copy,
                       staging_songs_copy]
-insert_table_queries = [songplay_table_insert,
-                        user_table_insert,
-                        song_table_insert,
-                        artist_table_insert,
-                        time_table_insert]
+insert_table_queries = [#songplay_table_insert,
+                        #user_table_insert,
+                        song_table_insert]#,
+                        #artist_table_insert,
+                        #time_table_insert]
