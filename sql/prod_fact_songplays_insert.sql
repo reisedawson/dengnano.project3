@@ -1,8 +1,9 @@
+-- Finally, after updating all dimensions, insert all
+-- NextSong events into the songplays fact table, then
+-- empty the events staging table 
+BEGIN TRANSACTION;
+
 -- Insert the whole staging events table into the songplays fact table
--- In reality I would make sure to do some kind of clearing down of the
--- staging area following this. 
--- TODO: This may be something I could add within a transaction to this
---       script once all is complete/tested/approved. 
 INSERT INTO fact_songplays (start_time, user_id, user_level, song_id, artist_id, session_id, songplay_location, user_agent)
 (
     SELECT
@@ -19,3 +20,8 @@ INSERT INTO fact_songplays (start_time, user_id, user_level, song_id, artist_id,
     WHERE
         page = 'NextSong'
 );
+
+-- Empty the staging table now we have used all the data from it
+DELETE FROM stg_events;
+
+END TRANSACTION;
