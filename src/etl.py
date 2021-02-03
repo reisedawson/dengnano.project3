@@ -4,12 +4,20 @@ from sql_queries import copy_table_queries, insert_table_queries
 
 
 def load_staging_tables(cur, conn):
+    """
+    Use the parallelised/distributed COPY command to insert the data
+    stored in S3 log/song JSON files into a staging schema in Redshift.
+    """
     for query in copy_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def insert_tables(cur, conn):
+    """
+    Transform the raw logs and song files that were loaded to Redshift 
+    into a dimensional model based analytics schema. 
+    """
     for query in insert_table_queries:
         cur.execute(query)
         conn.commit()
