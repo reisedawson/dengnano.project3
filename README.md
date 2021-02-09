@@ -49,30 +49,30 @@ Structuring the data in this way allows easy, fast aggregation queries over the 
 There are several constraints applied to the database that may be worth highlighting:
 
 **dim_artists table**
-- artist_id: This field has been defined as the primary key for this table. Whilst Redshift does not enforce referential integrity, this will still allow the query optimiser/planner to give us better performance. It has also been specified that this field cannot be NULL, as it's the primary key.
-- artist_name: This field has the NOT NULL constraint on it. Incoming songs metadata should provide us with this as a minimum and so constraining the data in this way will highlight potential issues with our source data before they get to the database.
+- `artist_id`: This field has been defined as the primary key for this table. Whilst Redshift does not enforce referential integrity, this will still allow the query optimiser/planner to give us better performance. It has also been specified that this field cannot be NULL, as it's the primary key.
+- `artist_name`: This field has the NOT NULL constraint on it. Incoming songs metadata should provide us with this as a minimum and so constraining the data in this way will highlight potential issues with our source data before they get to the database.
 - The distribution style for this table has been set to ALL as the million songs dataset has approximately only 50,000 artists in. It is my view that this is small enough to copy across all nodes for improved query performance (I also expect that a high proportion of queries will join on this table).
 - As Redshift doesn't support a typical MERGE/UPSERT command, loads into this table are performed within a transaction with a deletion of already existing records followed by a full insert of the staged songs/artists data.
 
 **dim_songs table**
-- song_id: This field has been defined as the primary key for this table, along with a NOT NULL constraint. The same comment as artist_id above stands here too. This has also been defined as the distkey for this table (and therefore the table has been set to a KEY distribution style). This is because an EVEN distribution could be more likely to result in a skewed distribution and so this meaningless integer value has been used instead.
-- title: This field has the NOT NULL constraint on it. Incoming songs metadata should provide us with this as a minimum and so constraining the data in this way will highlight potential issues with our source data before they get to the database.
-- artist_id: This field has the NOT NULL constraint on it. Incoming songs metadata should provide us with this as a minimum and so constraining the data in this way will highlight potential issues with our source data before they get to the database. It could be worth investgating removing this field from the songplays fact table in the future and creating a snowflake schema with the artists table mentioned already referenced by this table instead of the songplays table.
+- `song_id`: This field has been defined as the primary key for this table, along with a NOT NULL constraint. The same comment as `artist_id` above stands here too. This has also been defined as the distkey for this table (and therefore the table has been set to a KEY distribution style). This is because an EVEN distribution could be more likely to result in a skewed distribution and so this meaningless integer value has been used instead.
+- `title`: This field has the NOT NULL constraint on it. Incoming songs metadata should provide us with this as a minimum and so constraining the data in this way will highlight potential issues with our source data before they get to the database.
+- `artist_id`: This field has the NOT NULL constraint on it. Incoming songs metadata should provide us with this as a minimum and so constraining the data in this way will highlight potential issues with our source data before they get to the database. It could be worth investgating removing this field from the songplays fact table in the future and creating a snowflake schema with the artists table mentioned already referenced by this table instead of the songplays table.
 - As Redshift doesn't support a typical MERGE/UPSERT command, loads into this table are performed within a transaction with a deletion of already existing records followed by a full insert of the staged songs/artists data.
 
 **dim_users table**
-- user_id: This field has been defined as the primary key for this table, the same comment as artist_id above stands here too. We do not want to end up with duplicate users in this table. This has also been defined as the distkey for this table (and therefore the table has been set to a KEY distribution style). This is because an EVEN distribution could be more likely to result in a skewed distribution and so this meaningless integer value has been used instead.
-- As Redshift doesn't support a typical MERGE/UPSERT command, loads into this table are performed within a transaction with a deletion of already existing records followed by a full insert of the NextSong event users.
+- `user_id`: This field has been defined as the primary key for this table, the same comment as `artist_id` above stands here too. We do not want to end up with duplicate users in this table. This has also been defined as the distkey for this table (and therefore the table has been set to a KEY distribution style). This is because an EVEN distribution could be more likely to result in a skewed distribution and so this meaningless integer value has been used instead.
+- As Redshift doesn't support a typical MERGE/UPSERT command, loads into this table are performed within a transaction with a deletion of already existing records followed by a full insert of the `NextSong` event users.
 
 **dim_time table**
-- start_time: This field has been defined as the primary key for this table. We do not want to end up with duplicate times in this table.
-- All other fields have the NOT NULL constraint. These fields are generated by the ETL process based on the start_time field and therefore highlighting where NULLs occur could identify issues with our ETL process.
-- start_time: This has been defined as the distkey and sortkey for this table (and therefore the table has been set to a KEY distribution style). This is to align with the fact table distribution style and keys.
-- As Redshift doesn't support a typical MERGE/UPSERT command, loads into this table are performed within a transaction with a deletion of already existing records followed by a full insert of the NextSong event start times.
+- `start_time`: This field has been defined as the primary key for this table. We do not want to end up with duplicate times in this table.
+- All other fields have the NOT NULL constraint. These fields are generated by the ETL process based on the `start_time` field and therefore highlighting where NULLs occur could identify issues with our ETL process.
+- `start_time`: This has been defined as the distkey and sortkey for this table (and therefore the table has been set to a KEY distribution style). This is to align with the fact table distribution style and keys.
+- As Redshift doesn't support a typical MERGE/UPSERT command, loads into this table are performed within a transaction with a deletion of already existing records followed by a full insert of the `NextSong` event start times.
 
 **fact_songplays table**
 - `songplay_id`: This field has been defined with the IDENTITY(0,1) property which is Redshift's equivalent of the SERIAL keyword - this means that we can allow the insertion process to auto-generate an auto-incrementing integer key value to input here. This is useful as we don't have anything immediately available to use within the logs data.
-- `start_time`: This has been defined as the distkey and sortkey for this table (and therefore the table has been set to a KEY distribution style). This is because many queries run against this table will involve a date/time filter, and/or will be joined to the dim_time table.
+- `start_time`: This has been defined as the distkey and sortkey for this table (and therefore the table has been set to a KEY distribution style). This is because many queries run against this table will involve a date/time filter, and/or will be joined to the `dim_time` table.
 
 
 **Instructions**
