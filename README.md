@@ -80,7 +80,7 @@ Instructions
 - Create a virtual environment and activate
 - Install requirements (use requirements-dev if you will be developing against this repo or requirements-prod if just running the ETL pipeline)
 - Make sure you have created a Cluster subnet group and launched a Redshift cluster attached to this subnet group. 
-- You will need an IAM role with Read access to S3 permissions.
+- You will need an IAM role with Read access to S3 permission assigned.
 - Create a config file called dwh.cfg and save in the root of this repo. 
 - Within dwh.cfg input the config variables needed by this project.
 - Using Python, run src/create_tables.py
