@@ -62,8 +62,8 @@ staging_songs_table_create = """
     CREATE TABLE IF NOT EXISTS stg_songs (
         num_songs INT
         , artist_id VARCHAR(max)
-        , artist_latitude VARCHAR(max)
-        , artist_longitude VARCHAR(max)
+        , artist_latitude DECIMAL(9, 6)
+        , artist_longitude DECIMAL(9, 6)
         , artist_location VARCHAR(max)
         , artist_name VARCHAR(max)
         , song_id VARCHAR(max)
@@ -189,7 +189,7 @@ user_table_insert = """
     -- Delete any records from the users dimension that have a
     -- corresponding id in the staging table
     DELETE FROM dim_users
-    USING stg_events
+    USING stg_events 
     WHERE dim_users.user_id = stg_events.userId
     AND stg_events.page = 'NextSong';
 
@@ -202,11 +202,23 @@ user_table_insert = """
             , lastName
             , gender
             , level
-        FROM
-            stg_events
+        FROM (
+            SELECT
+                userId
+                , firstName
+                , lastName
+                , gender
+                , level
+                , ts
+                RANK() OVER (PARTITION BY userId ORDER BY ts DESC) AS userIdRank
+            FROM
+                stg_events
+            WHERE
+                page = 'NextSong'
+                AND userId IS NOT NULL
+        )
         WHERE
-            page = 'NextSong'
-            AND userId IS NOT NULL
+            userIdRank = 1
     );
 
     END TRANSACTION;
@@ -228,7 +240,7 @@ song_table_insert = """
     -- Insert the whole staging songs table into the song dimension
     INSERT INTO dim_songs (song_id, title , artist_id, song_year, duration)
     (
-        SELECT
+        SELECT DISTINCT
             song_id
             , title
             , artist_id
@@ -258,7 +270,7 @@ artist_table_insert = """
     INSERT INTO dim_artists (artist_id, artist_name, artist_location, latitude,
                              longitude)
     (
-        SELECT
+        SELECT DISTINCT
             artist_id
             , artist_name
             , artist_location
@@ -290,7 +302,7 @@ time_table_insert = """
     INSERT INTO dim_time (start_time, start_hour, start_day, start_week,
                           start_month, start_year, start_weekday)
     (
-        SELECT
+        SELECT DISTINCT
             TIMESTAMP 'epoch' + ts/1000 *INTERVAL '1 second'
             , EXTRACT(hour FROM TIMESTAMP 'epoch'
                         + ts/1000 *INTERVAL '1 second')

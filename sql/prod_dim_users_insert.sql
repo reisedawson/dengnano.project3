@@ -20,11 +20,23 @@ INSERT INTO dim_users (user_id, first_name, last_name, gender, user_level)
         , lastName
         , gender
         , level
-    FROM 
-        stg_events
+    FROM (
+        SELECT
+            userId
+            , firstName
+            , lastName
+            , gender
+            , level
+            , ts
+            RANK() OVER (PARTITION BY userId ORDER BY ts DESC) AS userIdRank
+        FROM
+            stg_events
+        WHERE
+            page = 'NextSong'
+            AND userId IS NOT NULL
+    )
     WHERE
-        page = 'NextSong'
-        AND userId IS NOT NULL
+        userIdRank = 1
 );
 
 END TRANSACTION;

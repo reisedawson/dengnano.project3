@@ -14,7 +14,7 @@ AND stg_events.page = 'NextSong';
 -- Insert the whole staging events table into the time dimension
 INSERT INTO dim_time (start_time, start_hour, start_day, start_week, start_month, start_year, start_weekday)
 (
-    SELECT
+    SELECT DISTINCT
         TIMESTAMP 'epoch' + ts/1000 *INTERVAL '1 second'
         , EXTRACT(hour FROM TIMESTAMP 'epoch' + ts/1000 *INTERVAL '1 second')
         , EXTRACT(day FROM TIMESTAMP 'epoch' + ts/1000 *INTERVAL '1 second')

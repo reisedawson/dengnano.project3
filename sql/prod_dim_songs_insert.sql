@@ -13,7 +13,7 @@ WHERE dim_songs.song_id = stg_songs.song_id;
 -- Insert the whole staging songs table into the song dimension
 INSERT INTO dim_songs (song_id, title , artist_id, song_year, duration)
 (
-    SELECT
+    SELECT DISTINCT
         song_id
         , title
         , artist_id

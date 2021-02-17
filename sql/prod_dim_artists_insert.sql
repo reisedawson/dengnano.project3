@@ -13,7 +13,7 @@ WHERE dim_artists.artist_id = stg_songs.artist_id;
 -- Insert the whole staging songs table into the artist dimension
 INSERT INTO dim_artists (artist_id, artist_name, artist_location, latitude, longitude)
 (
-    SELECT
+    SELECT DISTINCT
         artist_id
         , artist_name
         , artist_location
